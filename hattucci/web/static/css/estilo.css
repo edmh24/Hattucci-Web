@@ -864,39 +864,31 @@ tbody tr:hover {
 }
 
 /* ==========================
-   🔥 SIDEBAR RESPONSIVE FIX
+   🔥 SIDEBAR RESPONSIVE
    ========================== */
 @media (max-width: 900px) {
-
-    /* Ocultar sidebar COMPLETAMENTE */
     .sidebar {
         position: fixed;
+        left: -260px;         /* Oculta fuera de pantalla */
         top: 0;
-        left: -300px;  /* ⬅ mueve todo fuera de la pantalla */
-        width: 250px;
+        transition: 0.35s ease;
         height: 100vh;
-        background: #111;
-        transition: left 0.35s ease;
-        z-index: 1500;
     }
 
-    /* Mostrar sidebar cuando está activo */
     .sidebar.active {
-        left: 0;
+        left: 0;              /* Mostrar sidebar */
     }
 
-    /* El contenido ocupa el 100% */
     main {
         margin-left: 0 !important;
-        width: 100% !important;
+        width: 100%;
+        padding-top: 70px;
     }
 
-    /* Botón hamburguesa visible */
     .hamburger {
-        display: flex;
+        display: flex;        /* Mostrar botón en móvil */
     }
 }
-
 
 /* FORMULARIOS EN UNA SOLA COLUMNA EN MÓVIL */
 @media (max-width: 700px) {
@@ -924,140 +916,4 @@ tbody tr:hover {
     .form-section button {
         width: 100%;
     }
-}
-
-/* TABLAS SCROLLEABLES EN MÓVIL */
-@media (max-width: 750px) {
-    table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-        border-radius: 1rem;
-    }
-
-    th, td {
-        padding: 0.7rem !important;
-        font-size: 0.9rem;
-    }
-}
-
-/* CARDS DE REPORTES EN COLUMNA */
-@media (max-width: 850px) {
-    .report-summary {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .report-card {
-        width: 90%;
-    }
-}
-
-@media (max-width: 600px) {
-    .table-section,
-    .products-container,
-    .compras-section {
-        width: 95% !important;
-        padding: 1rem !important;
-    }
-}
-
-/* ===========================================================
-   🔥 AJUSTES RESPONSIVOS DEL SIDEBAR (MÓVIL)
-   =========================================================== */
-
-/* El sidebar se oculta totalmente al lado izquierdo */
-@media (max-width: 768px) {
-
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 260px; 
-    height: 100vh;
-    transform: translateX(-100%);   /* 🔥 OCULTO COMPLETO */
-    transition: transform 0.35s ease;
-    z-index: 9999;
-  }
-
-  /* Cuando se active */
-  .sidebar.active {
-    transform: translateX(0);       /* 🔥 DESLIZA */
-  }
-
-  /* Botón hamburguesa visible */
-  .menu-toggle {
-    display: block;
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 10000;
-    background: #FFD700;
-    padding: 10px 12px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 22px;
-  }
-
-  /* Bajar el título Hattucci Web para que no choque */
-  .sidebar h2 {
-    margin-top: 60px !important;
-  }
-
-  /* Evitar la línea blanca inferior */
-  body, html {
-    overflow-x: hidden !important;
-    background: radial-gradient(circle at top left, #000, #1a1a1a);
-  }
-
-  /* Ajustar contenido cuando sidebar está activo */
-  main.sidebar-open {
-    filter: brightness(0.4);
-    pointer-events: none;
-  }
-}
-
-/* ===========================================================
-   🔥 TABLAS RESPONSIVAS
-   =========================================================== */
-
-@media (max-width: 768px) {
-
-  /* Scroll horizontal SOLO EN MÓVIL */
-  .table-section,
-  .compras-table-section {
-    overflow-x: auto !important;
-    padding-bottom: 1rem;
-  }
-
-  table {
-    min-width: 600px !important;
-  }
-}
-
-/* ===========================================================
-   🔥 FORMULARIOS LOGIN & REGISTRO RESPONSIVOS
-   =========================================================== */
-
-@media (max-width: 768px) {
-
-  .login-container,
-  .register-container {
-    width: 90% !important;
-    padding: 1.5rem !important;
-    margin-top: 2rem;
-  }
-
-  .login-container h2,
-  .register-container h2 {
-    font-size: 1.6rem !important;
-  }
-
-  input {
-    font-size: 1rem !important;
-  }
-
-  button {
-    font-size: 1.1rem !important;
-  }
 }

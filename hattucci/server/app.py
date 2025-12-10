@@ -264,6 +264,8 @@ def eliminar_inventario(id):
 def ventas():
     return render_template("ventas.html")
 
+from datetime import date
+
 @app.route("/descontar_stock", methods=["POST"])
 def descontar_stock():
     data = request.get_json()
@@ -272,25 +274,81 @@ def descontar_stock():
 
     try:
         conn = get_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
+        # Obtener fecha actual AAAA-MM-DD
+        fecha_hoy = date.today()
+
+        # Si hay boleta, obtener correlativo
+        correlativo = None
+        if comprobante == "BOLETA":
+            correlativo = obtener_siguiente_correlativo()  # 🔥 LLAMA A TU FUNCIÓN
+
+        # --------------------------------------------
+        # GUARDAR CADA PRODUCTO DE LA VENTA
+        # --------------------------------------------
         for item in venta:
+
+            # Descontar stock
             cursor.execute("""
                 UPDATE inventario
                 SET stock = stock - %s
                 WHERE id = %s
             """, (item["cantidad"], item["id"]))
 
+            # Registrar venta
+            cursor.execute("""
+                INSERT INTO ventas (producto, cantidad, total, fecha_venta, numero_boleta)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (
+                item["nombre"],
+                item["cantidad"],
+                item["total"],
+                fecha_hoy,
+                correlativo
+            ))
+
         conn.commit()
-        return jsonify({"ok": True})
+
+        # --------------------------------------------
+        # RESPUESTA AL FRONTEND
+        # --------------------------------------------
+        return jsonify({
+            "ok": True,
+            "correlativo": str(correlativo) if correlativo else None
+        })
 
     except Exception as e:
-        print("❌ ERROR descontando stock:", e)
+        print("❌ ERROR al procesar venta:", e)
         return jsonify({"ok": False, "error": str(e)})
 
     finally:
         cursor.close()
         conn.close()
+
+
+
+def obtener_siguiente_correlativo():
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Obtener número actual
+    cursor.execute("SELECT numero FROM boletas_correlativo ORDER BY id DESC LIMIT 1")
+    data = cursor.fetchone()
+
+    if not data:
+        numero = 1
+        cursor.execute("INSERT INTO boletas_correlativo (numero) VALUES (1)")
+    else:
+        numero = data["numero"] + 1
+        cursor.execute("INSERT INTO boletas_correlativo (numero) VALUES (%s)", (numero,))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return numero
+
 
 
 # ------------------------------------------
@@ -590,43 +648,51 @@ def obtener_reportes_dia():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # Resumen
+    # =============================
+    #      RESUMEN DE VENTAS
+    # =============================
     cursor.execute("""
         SELECT 
             SUM(total) AS total_ventas,
-            SUM(cantidad_total) AS productos_vendidos,
-            COUNT(*) AS num_transacciones
+            SUM(cantidad) AS productos_vendidos,
+            COUNT(*) AS num_ventas
         FROM ventas
-        WHERE DATE(fecha) = %s
+        WHERE DATE(fecha_venta) = %s
     """, (fecha,))
-    resumen = cursor.fetchone()
+    resumen_ventas = cursor.fetchone()
 
-    # Si no hay registros, devolver ceros
-    if not resumen["total_ventas"]:
-        resumen = {
+    if resumen_ventas["total_ventas"] is None:
+        resumen_ventas = {
             "total_ventas": 0,
             "productos_vendidos": 0,
-            "num_transacciones": 0
+            "num_ventas": 0
         }
 
-    # Detalle
+    # =============================
+    #      RESUMEN DE COMPRAS
+    # =============================
     cursor.execute("""
         SELECT 
-            TIME(fecha) AS hora,
-            productos,
-            total
-        FROM ventas
-        WHERE DATE(fecha) = %s
-        ORDER BY fecha ASC
+            SUM(cantidad * precio_unitario) AS total_compras,
+            COUNT(*) AS num_compras
+        FROM compras
+        WHERE DATE(fecha_registro) = %s
     """, (fecha,))
-    detalle = cursor.fetchall()
+    resumen_compras = cursor.fetchone()
+
+    if resumen_compras["total_compras"] is None:
+        resumen_compras = {
+            "total_compras": 0,
+            "num_compras": 0
+        }
 
     conn.close()
 
     return jsonify({
-        "resumen": resumen,
-        "detalle": detalle
+        "ventas": resumen_ventas,
+        "compras": resumen_compras
     })
+
 
 @app.route("/obtener_movimientos_dia", methods=["POST"])
 def obtener_movimientos_dia():
@@ -640,35 +706,44 @@ def obtener_movimientos_dia():
     #   VENTAS DEL DÍA
     # =============================
     cursor.execute("""
-        SELECT 'VENTA' AS tipo, producto AS producto, cantidad AS cantidad, total AS total
+        SELECT 
+            'VENTA' AS tipo,
+            producto,
+            cantidad,
+            total,
+            fecha_venta AS fecha
         FROM ventas
-        WHERE DATE(fecha) = %s
+        WHERE DATE(fecha_venta) = %s
     """, (fecha,))
     ventas = cursor.fetchall()
-
-    totalVentas = sum(v["total"] for v in ventas)
 
     # =============================
     #   COMPRAS DEL DÍA
     # =============================
     cursor.execute("""
-        SELECT 'COMPRA' AS tipo, producto AS producto, cantidad AS cantidad, (cantidad * precio_unitario) AS total
+        SELECT 
+            'COMPRA' AS tipo,
+            producto,
+            cantidad,
+            (cantidad * precio_unitario) AS total,
+            fecha_registro AS fecha
         FROM compras
         WHERE DATE(fecha_registro) = %s
     """, (fecha,))
     compras = cursor.fetchall()
 
-    totalCompras = sum(c["total"] for c in compras)
-
     # =============================
-    #   JUNTAR TODAS
+    #    UNIR TODO EN UNA LISTA
     # =============================
     movimientos = ventas + compras
 
     # =============================
-    #   GANANCIA O PÉRDIDA
+    #    GANANCIA O PÉRDIDA
     # =============================
+    totalVentas = sum(float(v["total"]) for v in ventas)
+    totalCompras = sum(float(c["total"]) for c in compras)
     ganancia = totalVentas - totalCompras
+
 
     conn.close()
 
@@ -678,6 +753,7 @@ def obtener_movimientos_dia():
         "totalCompras": totalCompras,
         "ganancia": ganancia
     })
+
 
 # ------------------------------------------
 # SERVIDOR

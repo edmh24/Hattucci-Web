@@ -6,6 +6,42 @@
   <title>Ventas</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="static/css/estilo.css">
+
+  <style>
+    /* ======== BOLETA ======== */
+    #boletaContainer {
+        display: none;
+        background: white;
+        color: black;
+        padding: 20px;
+        width: 700px;
+        margin: 20px auto;
+        border: 2px solid #000;
+        font-family: Arial, sans-serif;
+    }
+
+    #boletaContainer table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    #boletaContainer th, #boletaContainer td {
+        border: 1px solid black;
+        padding: 6px;
+    }
+
+    /* Solo imprimir la boleta */
+    @media print {
+        body * { visibility: hidden; }
+        #boletaContainer, #boletaContainer * { visibility: visible; }
+        #boletaContainer {
+            position: absolute;
+            left: 0; top: 0;
+            width: 100%;
+        }
+    }
+  </style>
 </head>
 
 <body>
@@ -38,7 +74,7 @@
         <h1 class="text-warning">Gestión de Ventas</h1>
       </header>
 
-      <!-- FORMULARIO DE VENTA -->
+      <!-- FORMULARIO -->
       <section class="form-section mb-4">
         <h2>Registrar Venta</h2>
 
@@ -54,7 +90,7 @@
         </form>
       </section>
 
-      <!-- TABLA DE VENTA -->
+      <!-- TABLA -->
       <section class="table-section">
         <table id="tablaVenta">
           <thead class="table-warning text-dark">
@@ -80,21 +116,52 @@
     </main>
   </div>
 
-  <!-- SWEETALERT -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- =================================================
+                📄 BOLETA CON DESCUENTO Y CORRELATIVO
+  ================================================== -->
+  <div id="boletaContainer">
+      <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:10px;">
+          <h2 style="margin:0;">MINIMARKET "HATTUCCI"</h2>
+          <p style="margin:0;">RUC: 10701822981</p>
+          <p style="margin:0;">Malecón Gálvez N°628 - Tarma</p>
+          <p style="margin:0;">Cel: 913621729</p>
+      </div>
 
-  <!-- ============================================================
-                         🔥 JAVASCRIPT COMPLETO
-       ============================================================ -->
-  <script>
+      <h3 style="text-align:center; margin-top:10px;">
+          BOLETA DE VENTA N° <span id="b_numero"></span>
+      </h3>
 
-  let productosInventario = [];
-  let carrito = [];
+      <p><b>Fecha:</b> <span id="b_fecha"></span></p>
 
-  /* ===============================
-         CARGAR INVENTARIO
-     =============================== */
-  async function cargarInventario() {
+      <table>
+          <thead>
+              <tr style="background:#dcdcdc;">
+                  <th>Cant.</th>
+                  <th>Descripción</th>
+                  <th>P. Unit</th>
+                  <th>Desc.</th>
+                  <th>Importe</th>
+              </tr>
+          </thead>
+          <tbody id="b_detalle"></tbody>
+      </table>
+
+      <h3 style="text-align:right; margin-top:10px;">
+          Total S/: <span id="b_total"></span>
+      </h3>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- ============================================================
+                     🔥 JAVASCRIPT ACTUALIZADO
+=============================================================== -->
+<script>
+let carrito = [];
+let productosInventario = [];
+
+/* ====================== INVENTARIO ====================== */
+async function cargarInventario() {
     const res = await fetch("/obtener_inventario");
     productosInventario = await res.json();
 
@@ -102,192 +169,152 @@
     select.innerHTML = `<option value="">Selecciona un producto</option>`;
 
     productosInventario.forEach(p => {
-
-      let disable = p.stock <= 0 ? "disabled" : "";
-
-      select.innerHTML += `
-        <option value="${p.id}" 
-          data-nombre="${p.producto}"
-          data-stock="${p.stock}"
-          data-precio="${p.precio_venta}"
-          data-venc="${p.fecha_vencimiento}"
-          ${disable}>
-            ${p.producto} — S/ ${p.precio_venta} (${p.stock} uds)
-        </option>
-      `;
+        select.innerHTML += `
+          <option value="${p.id}"
+            data-nombre="${p.producto}"
+            data-stock="${p.stock}"
+            data-precio="${p.precio_venta}">
+              ${p.producto} — S/ ${p.precio_venta} (${p.stock} uds)
+          </option>`;
     });
-  }
+}
 
-  /* ============================================================
-          AGREGAR A VENTA
-     ============================================================ */
-  document.getElementById("ventaForm").addEventListener("submit", function(e) {
+/* ==================== AGREGAR PRODUCTO ==================== */
+document.getElementById("ventaForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
     const opt = productoSelect.selectedOptions[0];
-    if (!opt || !opt.value) return;
+    if (!opt.value) return;
 
     const id = opt.value;
     const nombre = opt.dataset.nombre;
     const precio = parseFloat(opt.dataset.precio);
     const stock = parseInt(opt.dataset.stock);
-    const venc = opt.dataset.venc;
-
-    // 🔧 CORRECCIÓN: obtener valores reales del input
-    const cantidadValor = parseInt(document.getElementById("cantidad").value);
-    const descuentoValor = parseInt(document.getElementById("descuento").value || 0);
+    const cantidadValor = parseInt(cantidad.value);
+    const descuentoValor = parseInt(descuento.value || 0);
 
     if (cantidadValor > stock) {
-        Swal.fire("📦 Stock insuficiente", "No puedes vender más de lo que hay en inventario", "warning");
-        return;
-    }
-
-    if (venc) {
-        const hoy = new Date();
-        const fv = new Date(venc);
-        const dias = Math.ceil((fv - hoy) / 86400000);
-
-        if (dias <= 7) {
-            Swal.fire("⏳ Producto por vencer", 
-              `El producto vence en ${dias} días. Puedes aplicar descuento.`, 
-              "info");
-        }
+        return Swal.fire("📦 Stock insuficiente");
     }
 
     const total = (precio * cantidadValor) * (1 - descuentoValor / 100);
 
-    carrito.push({
-        id,
-        nombre,
-        cantidad: cantidadValor,
-        precio,
-        descuento: descuentoValor,
-        total
-    });
+    carrito.push({ id, nombre, cantidad: cantidadValor, precio, descuento: descuentoValor, total });
 
     actualizarTablaVenta();
     actualizarTotalVenta();
-
-    // limpiar inputs
-    document.getElementById("cantidad").value = "";
-    document.getElementById("descuento").value = "";
 });
 
-
-  /* ===============================
-       ACTUALIZAR TABLA
-     =============================== */
-  function actualizarTablaVenta() {
+/* ==================== TABLA ==================== */
+function actualizarTablaVenta() {
     const tbody = document.querySelector("#tablaVenta tbody");
     tbody.innerHTML = "";
 
     carrito.forEach((item, index) => {
-      tbody.innerHTML += `
-        <tr>
-          <td>${item.nombre}</td>
-          <td>${item.cantidad}</td>
-          <td>S/ ${item.precio.toFixed(2)}</td>
-          <td>${item.descuento}%</td>
-          <td>S/ ${item.total.toFixed(2)}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="eliminarItem(${index})">🗑</button></td>
-        </tr>
-      `;
+        tbody.innerHTML += `
+            <tr>
+                <td>${item.nombre}</td>
+                <td>${item.cantidad}</td>
+                <td>S/ ${item.precio.toFixed(2)}</td>
+                <td>${item.descuento}%</td>
+                <td>S/ ${item.total.toFixed(2)}</td>
+                <td><button onclick="eliminarItem(${index})" class="btn btn-danger btn-sm">🗑</button></td>
+            </tr>`;
     });
-  }
+}
 
-  function eliminarItem(i) {
+function eliminarItem(i) {
     carrito.splice(i, 1);
     actualizarTablaVenta();
     actualizarTotalVenta();
-  }
+}
 
-  function actualizarTotalVenta() {
-    let total = carrito.reduce((sum, item) => sum + item.total, 0);
+/* ==================== TOTAL ==================== */
+function actualizarTotalVenta() {
+    let total = carrito.reduce((sum, i) => sum + i.total, 0);
     document.getElementById("totalVenta").textContent = "S/ " + total.toFixed(2);
-  }
+}
 
-  /* ============================================================
-      CONFIRMAR VENTA CON COMPROBANTE
-     ============================================================ */
-  document.getElementById("confirmarVenta").addEventListener("click", async () => {
+/* ==================== CONFIRMAR VENTA ==================== */
+document.getElementById("confirmarVenta").addEventListener("click", async () => {
 
     if (carrito.length === 0) {
-      Swal.fire("Carrito vacío", "Agrega productos antes de confirmar", "warning");
-      return;
+        return Swal.fire("Carrito vacío");
     }
 
-    // Preguntar si desea comprobante
-    const comprobante = await Swal.fire({
-        title: "¿Desea comprobante de pago?",
-        icon: "question",
+    const ask = await Swal.fire({
+        title: "¿Desea boleta?",
         showCancelButton: true,
         confirmButtonText: "Sí",
-        cancelButtonText: "No",
-        confirmButtonColor: "#28a745",
-        cancelButtonColor: "#dc3545"
+        cancelButtonText: "No"
     });
 
-    let tipoComprobante = "SIN_COMPROBANTE";
+    const tipo = ask.isConfirmed ? "BOLETA" : "SIN_COMPROBANTE";
 
-    if (comprobante.isConfirmed) {
-        const tipo = await Swal.fire({
-            title: "Seleccione el tipo de comprobante",
-            input: "radio",
-            inputOptions: {
-                boleta: "Boleta",
-                boleta_electronica: "Boleta Electrónica",
-                factura: "Factura"
-            },
-            inputValidator: value => !value && "Debe seleccionar una opción",
-            confirmButtonText: "Aceptar"
-        });
+    procesarVenta(tipo);
+});
 
-        tipoComprobante = tipo.value;
-    }
+/* ==================== PROCESAR VENTA ==================== */
+async function procesarVenta(comprobante) {
 
-    await procesarVenta(tipoComprobante);
-  });
-
-  /* ============================================================
-      PROCESAR VENTA → DESCONTAR STOCK
-     ============================================================ */
-  async function procesarVenta(tipoComprobante) {
     const res = await fetch("/descontar_stock", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        venta: carrito,
-        comprobante: tipoComprobante
-      })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ venta: carrito, comprobante })
     });
 
     const data = await res.json();
+    const total = carrito.reduce((s, i) => s + i.total, 0);
 
-    if (data.ok) {
-      Swal.fire({
-        title: "Venta registrada",
-        html: `
-          Total: <b>S/ ${carrito.reduce((s, i) => s + i.total, 0).toFixed(2)}</b><br>
-          Comprobante: <b>${tipoComprobante.replace("_", " ")}</b>
-        `,
-        icon: "success"
-      });
+    if (!data.ok) return Swal.fire("Error al registrar venta");
 
-      carrito = [];
-      actualizarTablaVenta();
-      actualizarTotalVenta();
-      cargarInventario();
+    /* === SIN BOLETA === */
+    if (comprobante === "SIN_COMPROBANTE") {
+        Swal.fire("Venta registrada", `Total S/ ${total.toFixed(2)}`, "success");
+        carrito = [];
+        actualizarTablaVenta();
+        actualizarTotalVenta();
+        cargarInventario();
+        return;
     }
-  }
 
-  /* ===============================
-        INICIALIZAR
-     =============================== */
-  document.addEventListener("DOMContentLoaded", cargarInventario);
+    /* === GENERAR BOLETA === */
+    const correlativo = data.correlativo.padStart(4, "0");
 
-  </script>
+    document.getElementById("b_numero").textContent = correlativo;
+    document.getElementById("b_fecha").textContent = new Date().toLocaleDateString();
 
-  <script>
+    let detalle = "";
+    carrito.forEach(i => {
+        detalle += `
+        <tr>
+            <td>${i.cantidad}</td>
+            <td>${i.nombre}</td>
+            <td>S/ ${i.precio.toFixed(2)}</td>
+            <td>${i.descuento}%</td>
+            <td>S/ ${i.total.toFixed(2)}</td>
+        </tr>`;
+    });
+
+    document.getElementById("b_detalle").innerHTML = detalle;
+    document.getElementById("b_total").textContent = total.toFixed(2);
+
+    document.getElementById("boletaContainer").style.display = "block";
+
+    window.print(); // 🖨 auto imprimir / PDF
+
+    document.getElementById("boletaContainer").style.display = "none";
+
+    carrito = [];
+    actualizarTablaVenta();
+    actualizarTotalVenta();
+    cargarInventario();
+}
+
+document.addEventListener("DOMContentLoaded", cargarInventario);
+</script>
+
+<script>
 document.addEventListener("DOMContentLoaded", () => {
     const sidebar = document.querySelector(".sidebar");
     const hamburger = document.querySelector(".hamburger");
@@ -297,7 +324,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
-
 
 </body>
 </html>
