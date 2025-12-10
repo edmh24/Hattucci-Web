@@ -1,6 +1,6 @@
 # server/app.py
 from flask import Flask, render_template, request, redirect, jsonify
-from db import get_connection
+from hattucci.server.db import get_connection
 import bcrypt
 
 # Indicar la carpeta de templates y static
