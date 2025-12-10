@@ -12,6 +12,7 @@
 <div class="d-flex">
 
   <!-- SIDEBAR -->
+  <div class="hamburger">☰</div>
   <nav class="sidebar d-flex flex-column p-3">
       <div class="text-center mt-3 mb-4">
         <h2 class="text-warning">Hattucci Web</h2>
@@ -426,6 +427,17 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarInventario();
 });
 
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const sidebar = document.querySelector(".sidebar");
+    const hamburger = document.querySelector(".hamburger");
+
+    hamburger.addEventListener("click", () => {
+        sidebar.classList.toggle("active");
+    });
+});
 </script>
 
 </body>

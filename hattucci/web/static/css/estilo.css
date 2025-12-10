@@ -835,3 +835,121 @@ tbody tr:hover {
     max-width: 100%;
   }
 }
+
+/* ==========================
+   🔥 BOTÓN HAMBURGUESA
+   ========================== */
+.hamburger {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255,215,0,0.9);
+    border-radius: 10px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    color: black;
+    cursor: pointer;
+    z-index: 2000;
+    box-shadow: 0 0 12px rgba(255,215,0,0.6);
+    transition: 0.3s ease;
+}
+
+.hamburger:hover {
+    transform: scale(1.1);
+    background: #ffe64d;
+}
+
+/* ==========================
+   🔥 SIDEBAR RESPONSIVE
+   ========================== */
+@media (max-width: 900px) {
+    .sidebar {
+        position: fixed;
+        left: -260px;         /* Oculta fuera de pantalla */
+        top: 0;
+        transition: 0.35s ease;
+        height: 100vh;
+    }
+
+    .sidebar.active {
+        left: 0;              /* Mostrar sidebar */
+    }
+
+    main {
+        margin-left: 0 !important;
+        width: 100%;
+        padding-top: 70px;
+    }
+
+    .hamburger {
+        display: flex;        /* Mostrar botón en móvil */
+    }
+}
+
+/* FORMULARIOS EN UNA SOLA COLUMNA EN MÓVIL */
+@media (max-width: 700px) {
+
+    .product-form,
+    .compras-form {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 1rem !important;
+    }
+
+    .product-form input,
+    .product-form select,
+    .compras-form input {
+        width: 100% !important;
+        max-width: 100% !important;
+        font-size: 1rem;
+    }
+
+    .form-section {
+        padding: 1.5rem !important;
+        width: 97%;
+    }
+
+    .form-section button {
+        width: 100%;
+    }
+}
+
+/* TABLAS SCROLLEABLES EN MÓVIL */
+@media (max-width: 750px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        border-radius: 1rem;
+    }
+
+    th, td {
+        padding: 0.7rem !important;
+        font-size: 0.9rem;
+    }
+}
+
+/* CARDS DE REPORTES EN COLUMNA */
+@media (max-width: 850px) {
+    .report-summary {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .report-card {
+        width: 90%;
+    }
+}
+
+@media (max-width: 600px) {
+    .table-section,
+    .products-container,
+    .compras-section {
+        width: 95% !important;
+        padding: 1rem !important;
+    }
+}
