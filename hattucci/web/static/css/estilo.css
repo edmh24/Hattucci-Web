@@ -864,31 +864,39 @@ tbody tr:hover {
 }
 
 /* ==========================
-   🔥 SIDEBAR RESPONSIVE
+   🔥 SIDEBAR RESPONSIVE FIX
    ========================== */
 @media (max-width: 900px) {
+
+    /* Ocultar sidebar COMPLETAMENTE */
     .sidebar {
         position: fixed;
-        left: -260px;         /* Oculta fuera de pantalla */
         top: 0;
-        transition: 0.35s ease;
+        left: -300px;  /* ⬅ mueve todo fuera de la pantalla */
+        width: 250px;
         height: 100vh;
+        background: #111;
+        transition: left 0.35s ease;
+        z-index: 1500;
     }
 
+    /* Mostrar sidebar cuando está activo */
     .sidebar.active {
-        left: 0;              /* Mostrar sidebar */
+        left: 0;
     }
 
+    /* El contenido ocupa el 100% */
     main {
         margin-left: 0 !important;
-        width: 100%;
-        padding-top: 70px;
+        width: 100% !important;
     }
 
+    /* Botón hamburguesa visible */
     .hamburger {
-        display: flex;        /* Mostrar botón en móvil */
+        display: flex;
     }
 }
+
 
 /* FORMULARIOS EN UNA SOLA COLUMNA EN MÓVIL */
 @media (max-width: 700px) {
