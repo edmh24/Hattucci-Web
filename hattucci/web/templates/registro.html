@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro</title>
+    <link rel="stylesheet" href="static/css/registro.css">
+    <style>
+        .ok { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+
+<div class="container-center">
+
+    <form id="formRegistro" action="/registrar" method="POST">
+
+        <h2>Registro</h2>
+
+        <input type="text" name="usuario" id="usuario" placeholder="Usuario" required>
+        <span id="msgUsuario"></span>
+
+        <input type="email" name="correo" id="correo" placeholder="Correo" required pattern=".+@.+\.(com|net)">
+        <span id="msgCorreo"></span>
+
+        <input type="text" name="nombre" id="nombre" placeholder="Nombre" required>
+        <input type="text" name="apellido" id="apellido" placeholder="Apellido" required>
+        <input type="text" name="telefono" id="telefono" placeholder="Teléfono" required>
+
+        <input type="password" name="contraseña" id="contraseña" placeholder="Contraseña" required>
+
+        <button type="submit">Registrar</button>
+
+        <p>¿Ya tienes cuenta? <a href="/login">Iniciar sesión</a></p>
+
+    </form>
+
+</div>
+
+<script>
+// Referencia al botón
+const btnRegistrar = document.querySelector("button[type='submit']");
+
+// Función para actualizar el estado del botón
+function actualizarBoton() {
+    const usuarioMsg = document.getElementById("msgUsuario").className;
+    const correoMsg = document.getElementById("msgCorreo").className;
+
+    if (usuarioMsg === "error" || correoMsg === "error") {
+        btnRegistrar.disabled = true;
+        btnRegistrar.style.opacity = "0.6"; // efecto visual
+        btnRegistrar.style.cursor = "not-allowed";
+    } else {
+        btnRegistrar.disabled = false;
+        btnRegistrar.style.opacity = "1";
+        btnRegistrar.style.cursor = "pointer";
+    }
+}
+
+// Verificar usuario
+document.getElementById("usuario").addEventListener("input", function () {
+    fetch("/verificar?usuario=" + this.value)
+        .then(res => res.json())
+        .then(data => {
+            let msg = document.getElementById("msgUsuario");
+            msg.textContent = data.existe ? "❌ Usuario ya existe" : "✔ Disponible";
+            msg.className   = data.existe ? "error" : "ok";
+            actualizarBoton();
+        });
+});
+
+// Verificar correo
+document.getElementById("correo").addEventListener("input", function () {
+    fetch("/verificar?correo=" + this.value)
+        .then(res => res.json())
+        .then(data => {
+            let msg = document.getElementById("msgCorreo");
+            msg.textContent = data.existe ? "❌ Correo ya registrado" : "✔ Disponible";
+            msg.className   = data.existe ? "error" : "ok";
+            actualizarBoton();
+        });
+});
+
+// Validación adicional del correo al enviar
+document.getElementById("formRegistro").addEventListener("submit", function(e) {
+    const correo = document.getElementById("correo").value;
+    const regex = /^[^@]+@[^@]+\.(com|net)$/i;
+    if (!regex.test(correo)) {
+        e.preventDefault();
+        alert("El correo debe contener '@' y terminar en '.com' o '.net'");
+    }
+});
+
+// Inicialmente desactivar botón hasta que se verifiquen ambos campos
+btnRegistrar.disabled = true;
+btnRegistrar.style.opacity = "0.6";
+btnRegistrar.style.cursor = "not-allowed";
+</script>
+
+
+</body>
+</html>

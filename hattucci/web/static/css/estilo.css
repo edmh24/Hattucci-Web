@@ -1,0 +1,837 @@
+/* ===========================================================
+   🔸 RESET Y BODY 🔸
+   =========================================================== */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at top left, #000, #1a1a1a);
+  color: #fff;
+  width: 100%;
+  height: 100%;
+}
+
+/* ===========================================================
+   🔸 SIDEBAR FIJO 🔸
+   =========================================================== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background: #111;
+  border-right: 2px solid #FFD700;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1rem;
+  z-index: 1000;
+}
+
+.sidebar h2 {
+  font-size: 2rem;
+  color: #FFD700;
+  font-weight: 600;
+  margin: 20px 0 2rem 0;
+  text-align: center;
+  text-shadow: 0 0 5px #FFD700;
+}
+
+.sidebar .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 1.2rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  color: #000 !important;
+  background: #FFD700;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.sidebar .nav-link:hover {
+  background: #ffeb3b;
+  transform: translateX(5px);
+}
+
+.sidebar .btn-danger {
+  width: 100%;
+  border-radius: 1rem;
+  padding: 1rem;
+  font-weight: 600;
+  font-size: 1.2rem;
+  text-align: center;
+  transition: all 0.3s ease, box-shadow 0.3s;
+  background: #ff0000;
+  color: #fff;
+}
+
+.sidebar .btn-danger:hover {
+  transform: translateX(5px);
+  background: #ff5555;
+  box-shadow: 0 0 10px #FFD700;
+}
+
+/* ===========================================================
+   🔸 MAIN CON SCROLL 🔸
+   =========================================================== */
+main {
+  margin-left: 250px;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+main::-webkit-scrollbar {
+  width: 10px;
+}
+main::-webkit-scrollbar-thumb {
+  background: #FFD700;
+  border-radius: 10px;
+}
+main::-webkit-scrollbar-track {
+  background: #111;
+}
+
+/* ===========================================================
+   🔸 FORMULARIO DE INVENTARIO 🔸
+   =========================================================== */
+.form-section {
+  width: 100%;
+  max-width: 900px;
+  background: #0d0d0d;
+  border: 2px solid #FFD700;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.form-section:hover {
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.35);
+}
+
+.form-section h2 {
+  color: #FFD700;
+  margin-bottom: 1.8rem;
+  font-size: 1.7rem;
+}
+
+.product-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.product-form input {
+  padding: 0.8rem;
+  border-radius: 0.6rem;
+  border: 1px solid #FFD700;
+  background: #1a1a1a;
+  color: #fff;
+  width: 190px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.product-form input:focus {
+  outline: none;
+  box-shadow: 0 0 10px #FFD700;
+  transform: scale(1.02);
+}
+
+.product-form button {
+  background: linear-gradient(135deg, #FFD700, #FFC107);
+  border: none;
+  color: #000;
+  font-weight: 700;
+  border-radius: 0.7rem;
+  padding: 0.9rem 1.7rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.product-form button:hover {
+  background: #ffeb3b;
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+/* ===========================================================
+   🔸 TABLA DE INVENTARIO 🔸
+   =========================================================== */
+.table-section {
+  width: 100%;
+  max-width: 1000px;
+  background: #0d0d0d;
+  border: 2px solid #FFD700;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+.table-section:hover {
+  box-shadow: 0 0 35px rgba(255, 215, 0, 0.35);
+}
+
+#tablaProductos {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+#tablaProductos th {
+  background: linear-gradient(135deg, #FFD700, #FFC107);
+  color: #000;
+  font-weight: 700;
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 3px solid #ffea00;
+}
+
+#tablaProductos td {
+  text-align: center;
+  padding: 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.3s ease;
+}
+
+#tablaProductos tr:hover td {
+  background: rgba(255, 215, 0, 0.12);
+  transform: scale(1.005);
+}
+
+/* ===========================================================
+   🔸 INPUTS EDITABLES EN TABLA 🔸
+   =========================================================== */
+#tablaProductos input {
+  width: 80px;
+  padding: 0.3rem;
+  border-radius: 0.4rem;
+  border: 1px solid #FFD700;
+  background: #1a1a1a;
+  color: #fff;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+#tablaProductos input:focus {
+  outline: none;
+  box-shadow: 0 0 8px #FFD700;
+}
+
+/* ===========================================================
+   🔸 BOTÓN ELIMINAR 🔸
+   =========================================================== */
+.delete-btn {
+  background: linear-gradient(135deg, #ff0000, #ff4444);
+  border: none;
+  color: #fff;
+  border-radius: 0.6rem;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.4);
+}
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, #ff4d4d, #ff6666);
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+
+/* ===========================================================
+   🔸 SECCIONES DE VENTAS, COMPRAS Y REPORTES 🔸
+   =========================================================== */
+.products-container {
+  width: 100%;
+  max-width: 1000px;
+  background: #0d0d0d;
+  border: 2px solid #FFD700;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
+  text-align: center;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+}
+
+/* Botones generales */
+.back-btn, .confirm-btn, .product-form button {
+  background: linear-gradient(135deg, #FFD700, #FFC107);
+  border: none;
+  color: #000;
+  font-weight: 700;
+  border-radius: 0.7rem;
+  padding: 0.7rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.back-btn:hover, .confirm-btn:hover, .product-form button:hover {
+  background: #ffeb3b;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+
+
+.product-form select {
+  padding: 0.7rem;
+  border-radius: 0.6rem;
+  border: 1px solid #FFD700;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.product-form input:focus, .product-form select:focus {
+  outline: none;
+  box-shadow: 0 0 10px #FFD700;
+  transform: scale(1.02);
+}
+
+/* Tablas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+thead {
+  background: linear-gradient(135deg, #FFD700, #FFC107);
+  color: #000;
+}
+
+th, td {
+  padding: 0.9rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+tbody tr:hover {
+  background: rgba(255, 215, 0, 0.12);
+  transform: scale(1.005);
+}
+
+
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, #ff4d4d, #ff6666);
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+/* Total de venta */
+.total-box {
+  text-align: right;
+  margin-top: 1rem;
+}
+
+.total-box h3 {
+  color: #FFD700;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Reportes resumen */
+.report-summary {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.report-card {
+  flex: 1;
+  background: #0d0d0d;
+  border: 2px solid #FFD700;
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.25);
+}
+
+.report-card h3 {
+  color: #FFD700;
+  margin-bottom: 0.5rem;
+}
+
+.report-card p {
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+/* Scroll personalizado */
+.products-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.products-container::-webkit-scrollbar-thumb {
+  background: #FFD700;
+  border-radius: 10px;
+}
+
+.products-container::-webkit-scrollbar-track {
+  background: #111;
+}
+
+/* ===========================================================
+   🔸 COMPRAS – IGUAL QUE INVENTARIO 🔸
+   =========================================================== */
+
+/* Cuadro externo */
+.compras-section {
+  width: 100%;
+  max-width: 1000px;
+  background: #0d0d0d;
+  border: 2px solid #FFD700;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin: 2rem auto;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
+  transition: 0.3s ease;
+  text-align: center;
+}
+
+.compras-section:hover, 
+.compras-table-section:hover {
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.35);
+}
+
+.compras-section h2,
+.compras-table-section h2 {
+  color: #FFD700;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 5px #FFD700;
+}
+
+/* Cuadro interno como inventario */
+.compras-inner {
+  background: #121212;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+}
+
+/* FORMULARIO */
+.compras-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.3rem;
+}
+
+.compras-form input {
+  width: 200px;
+  padding: 0.8rem;
+  background: #1a1a1a;
+  border: 1px solid #FFD700;
+  border-radius: 0.6rem;
+  color: white;
+  transition: 0.3s ease;
+}
+
+.compras-form input:focus {
+  box-shadow: 0 0 10px #FFD700;
+  transform: scale(1.05);
+}
+
+/* BOTÓN */
+.btn-compras {
+  background: linear-gradient(135deg, #FFD700, #FFC107);
+  border: none;
+  padding: 0.9rem 2rem;
+  border-radius: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: #000;
+  margin-top: 1rem;
+  transition: 0.3s ease;
+}
+
+.btn-compras:hover {
+  background: #ffea2d;
+  transform: scale(1.07);
+  box-shadow: 0 0 15px rgba(255,215,0,0.6);
+}
+
+.compras-table-section {
+  width: 100%;
+  max-width: 1200px;   /* MÁS AMPLIO – evita que la tabla se corte */
+  background: #0d0d0d;
+  border: 2px solid #FFD700;
+  border-radius: 1rem;
+  padding: 1rem 0;     /* MENOS padding lateral */
+  margin: 2rem auto;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
+  transition: 0.3s ease;
+  border-radius: 1rem;  
+}
+
+#tablaCompras {
+    width: 90%;
+    margin: 0 auto; 
+    border-collapse: collapse;
+    border-radius: 1rem;    /* ✔ aplica bien */
+    overflow: hidden;       /* ✔ SOLO AQUI */
+    display: table;         /* 🔥 NECESARIO PARA QUE overflow funcione */
+}
+
+
+
+
+#tablaCompras thead {
+  background: linear-gradient(135deg, #FFD700, #FFC107);
+  color: #000;
+}
+
+#tablaCompras th,
+#tablaCompras td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  text-align: center;
+}
+
+#tablaCompras tbody tr:hover td {
+  background: rgba(255,215,0,0.15);
+  transform: scale(1.01);
+}
+
+/* Cuadro interno idéntico al de inventario */
+.compras-inner {
+  background: #131313;
+  padding: 2rem;
+  border-radius: 1.2rem;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7);
+  width: 100%;
+  max-width: 850px;
+  margin: auto;
+}
+
+.input-group-compras {
+  display: flex;
+  flex-direction: column;
+  align-items: center;       /* CENTRA TODO */
+  width: 240px;              /* MISMO ANCHO */
+  text-align: center;
+}
+
+.input-group-compras label {
+  color: #FFD700;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  width: 100%;
+  text-align: center;
+}
+
+
+/* Inputs */
+.input-group-compras input {
+  padding: 0.8rem;
+  border-radius: 0.6rem;
+  border: 1px solid #FFD700;
+  background: #1a1a1a;
+  color: white;
+  transition: 0.3s ease;
+}
+
+.input-group-compras input:focus {
+  box-shadow: 0 0 10px #FFD700;
+  transform: scale(1.03);
+}
+
+/* Formulario estilo grid */
+.compras-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.btn-editar, .btn-borrar {
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s ease;
+  margin: 2px;
+}
+
+/* Botón EDITAR (dorado) */
+.btn-editar {
+  background: #FFD700;
+  color: #000;
+  box-shadow: 0 0 8px rgba(255,215,0,0.5);
+}
+
+.btn-editar:hover {
+  background: #ffea2d;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(255,215,0,0.7);
+}
+
+/* Botón ELIMINAR (rojo) */
+.btn-borrar {
+  background: #ff4444;
+  color: white;
+  box-shadow: 0 0 8px rgba(255,0,0,0.5);
+}
+
+.btn-borrar:hover {
+  background: #ff6666;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(255,50,50,0.7);
+}
+
+/* ===========================================================
+   📱 RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+   =========================================================== */
+@media (max-width: 1024px) {
+  /* Sidebar más compacta */
+  .sidebar {
+    width: 200px;
+  }
+
+  main {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  /* Sidebar colapsable (modo móvil) */
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    box-shadow: none;
+  }
+
+  .sidebar h2 {
+    margin-top: 0;
+  }
+
+  main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+
+  /* Formularios más comprimidos */
+  .input-group-compras,
+  .product-form input,
+  .product-form select {
+    width: 100% !important;
+  }
+
+  .compras-form {
+    gap: 1rem;
+  }
+
+  /* Tabla scroll horizontal */
+  #tablaCompras {
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  #tablaCompras th,
+  #tablaCompras td {
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  /* Botones más pequeños */
+  .btn-editar, .btn-borrar {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Texto más pequeño */
+  h1, h2 {
+    font-size: 1.4rem !important;
+  }
+
+  .sidebar .nav-link {
+    padding: 0.7rem;
+    font-size: 1rem;
+  }
+
+  .btn-compras {
+    width: 100%;
+    padding: 0.8rem;
+  }
+
+  /* Formulario 1 columna */
+  .compras-form {
+    flex-direction: column;
+  }
+
+  /* Tabla más compacta */
+  #tablaCompras th,
+  #tablaCompras td {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* ===========================================================
+   📦 INVENTARIO — 2 MODOS EN FILAS (HORIZONTAL)
+   =========================================================== */
+
+/* CONTENEDOR EXTERNO */
+.form-section {
+  width: 100%;
+  max-width: 1000px;
+  background: #0d0d0d;
+  border: 2px solid #FFD700;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin: 2rem auto;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(255,215,0,0.25);
+}
+
+/* TÍTULO */
+.form-section h2 {
+  color: #FFD700;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  text-shadow: 0 0 5px #FFD700;
+}
+
+/* CUADRO INTERNO */
+.product-form {
+  width: 100%;
+  max-width: 850px;
+  margin: auto;
+  background: #121212 !important;
+  padding: 2rem !important;
+  border-radius: 1rem;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+}
+
+.product-form .mb-3 {
+  width: 100%;
+  max-width: 350px;      /* 🔥 ancho uniforme */
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* 🔥 centra label + input */
+  text-align: center;
+}
+
+
+/* Para que la última fila quede centrada si sobra un elemento */
+#seccionComprado > *:nth-child(5) {
+  grid-column: span 2;      /* 🔥 Precio de venta ocupa toda la fila */
+}
+
+/* LABELS */
+.product-form label {
+  color: #FFD700;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+/* INPUT BOXES */
+.product-form .mb-3 {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* INPUTS */
+.product-form input,
+.product-form select {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 0.6rem;
+  border: 1px solid #FFD700;
+  background: #1a1a1a;
+  color: #fff;
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+.product-form input:focus,
+.product-form select:focus {
+  transform: scale(1.03);
+  box-shadow: 0 0 10px #FFD700;
+  outline: none;
+}
+
+/* BOTÓN */
+.form-section button {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 2rem;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.7rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg,#FFD700,#FFC107);
+  color: #000;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.form-section button:hover {
+  background: #ffea2d;
+  transform: scale(1.06);
+  box-shadow: 0 0 15px rgba(255,215,0,0.6);
+}
+
+/* ===========================================================
+   📱 RESPONSIVE
+   =========================================================== */
+
+@media (max-width: 800px) {
+  #seccionNuevo,
+  #seccionComprado {
+    grid-template-columns: 1fr;  /* 🔥 Modo vertical en móvil */
+  }
+
+  #seccionComprado > *:nth-child(5) {
+    grid-column: span 1; /* Normal en móvil */
+  }
+
+  .product-form .mb-3 {
+    max-width: 100%;
+  }
+}

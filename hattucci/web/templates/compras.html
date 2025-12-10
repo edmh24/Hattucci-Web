@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compras / Proveedores</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/estilo.css">
+</head>
+
+<body>
+<div class="d-flex vh-100">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar d-flex flex-column p-3">
+    <div class="text-center mt-3 mb-4">
+      <h2 class="text-warning">Hattucci Web</h2>
+    </div>
+
+    <ul class="nav flex-column flex-grow-1 justify-content-center text-center">
+      <li class="nav-item mb-3">
+        <a href="{{ url_for('menu') }}" class="nav-link menu-btn">
+          <span>🏠</span> Menú Principal
+        </a>
+      </li>
+
+      <li class="nav-item mb-3">
+        <a href="{{ url_for('compras') }}" class="nav-link menu-btn active">
+          <span>🛒</span> Compras
+        </a>
+      </li>
+
+      <li class="nav-item mb-3">
+        <a href="{{ url_for('inventario') }}" class="nav-link menu-btn">
+          <span>📦</span> Inventario
+        </a>
+      </li>
+
+      <li class="nav-item mb-3">
+        <a href="{{ url_for('ventas') }}" class="nav-link menu-btn">
+          <span>💰</span> Ventas
+        </a>
+      </li>
+
+      <li class="nav-item mb-3">
+        <a href="{{ url_for('reportes') }}" class="nav-link menu-btn">
+          <span>📊</span> Reportes
+        </a>
+      </li>
+    </ul>
+
+    <div class="text-center mb-3 mt-auto">
+      <a href="{{ url_for('logout') }}" class="btn btn-danger w-100 py-2">Salir</a>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO -->
+  <main class="main-content flex-grow-1 p-4">
+
+    <header class="text-center mb-4">
+      <h1 class="text-warning">Gestión de compras</h1>
+    </header>
+
+    <!-- REGISTRO DE COMPRA -->
+    <div class="compras-section">
+      <h2 class="text-center mb-4">Registrar Compra</h2>
+
+      <form class="compras-form" id="compraForm">
+
+        <div class="input-group-compras">
+          <label>Nombre del proveedor</label>
+          <input type="text" id="proveedor_nombre" required>
+        </div>
+
+        <div class="input-group-compras">
+          <label>Contacto</label>
+          <input type="text" id="proveedor_contacto" required>
+        </div>
+
+        <div class="input-group-compras">
+          <label>Producto</label>
+          <input type="text" id="producto" required>
+        </div>
+
+        <div class="input-group-compras">
+          <label>Fecha de registro</label>
+          <input type="date" id="fecha_registro" required>
+        </div>
+
+        <div class="input-group-compras">
+          <label>Fecha de vencimiento</label>
+          <input type="date" id="fecha_vencimiento" required>
+        </div>
+
+        <div class="input-group-compras">
+          <label>Cantidad</label>
+          <input type="number" id="cantidad" min="1" required>
+        </div>
+
+        <div class="input-group-compras">
+          <label>Precio Unitario</label>
+          <input type="number" id="precio_unitario" step="0.01" required>
+        </div>
+
+        <button type="submit" class="btn-compras">Registrar Compra</button>
+      </form>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        fecha_registro.value = new Date().toISOString().split("T")[0];
+      });
+    </script>
+
+    <!-- FILTRAR POR DÍA -->
+    <div class="compras-section">
+      <h2 class="text-center mb-3">Filtrar por Día</h2>
+
+      <div class="compras-form">
+        <div class="input-group-compras">
+          <label>Fecha</label>
+          <input type="date" id="filtro_dia">
+        </div>
+
+        <button onclick="filtrarPorDia()" class="btn-compras">Filtrar</button>
+      </div>
+    </div>
+
+    <!-- TABLA -->
+    <div class="compras-table-section mt-5">
+      <h2 class="text-center mb-4">Historial de Compras</h2>
+
+      <table id="tablaCompras">
+        <thead>
+          <tr>
+            <th>Proveedor</th>
+            <th>Contacto</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unit.</th>
+            <th>Costo Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td colspan="8" style="text-align:center;">
+              Seleccione una fecha para mostrar compras
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+/* ============================================================
+   FORMATEAR FECHA (solo reordenar, nada más)
+   ============================================================ */
+function formatearFecha(f) {
+    if (!f) return "";
+    const [yyyy, mm, dd] = f.split("-");
+    return `${dd}/${mm}/${yyyy}`;
+}
+
+/* ============================================================
+   MOSTRAR COMPRAS EN TABLA
+   ============================================================ */
+function mostrarCompras(compras) {
+  const tabla = document.querySelector("#tablaCompras tbody");
+  tabla.innerHTML = "";
+
+  if (compras.length === 0) {
+      tabla.innerHTML = `
+        <tr><td colspan="8" style="text-align:center;">No hay compras registradas en este día</td></tr>`;
+      return;
+  }
+
+  let total = 0;
+
+  compras.forEach(c => {
+      const subtotal = c.cantidad * c.precio_unitario;
+      total += subtotal;
+
+      tabla.innerHTML += `
+      <tr>
+        <td>${c.nombre_proveedor}</td>
+        <td>${c.contacto_proveedor}</td>
+        <td>${c.producto}</td>
+        <td>${c.cantidad}</td>
+        <td>S/ ${parseFloat(c.precio_unitario).toFixed(2)}</td>
+        <td>S/ ${subtotal.toFixed(2)}</td>
+
+        <td>
+            <button class="btn-borrar" onclick="eliminarCompra(${c.id})">🗑</button>
+        </td>
+      </tr>`;
+  });
+
+  tabla.innerHTML += `
+    <tr class="total-row">
+      <td colspan="6" style="text-align:right; font-weight:bold;">TOTAL DEL DÍA</td>
+      <td style="color:#FFD700; font-weight:bold;">S/ ${total.toFixed(2)}</td>
+      <td></td>
+    </tr>`;
+}
+
+
+/* ============================================================
+   REGISTRAR COMPRA (solo insertar)
+   ============================================================ */
+document.getElementById("compraForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  // VALIDACIÓN DE CONTACTO
+  const contacto = proveedor_contacto.value.trim();
+  if (!/^\d{9}$/.test(contacto)) {
+      Swal.fire("Error", "El contacto debe tener exactamente 9 dígitos.", "error");
+      return;
+  }
+
+  // VALIDACIÓN DE FECHAS
+  const r = new Date(fecha_registro.value);
+  const v = new Date(fecha_vencimiento.value);
+
+  const dif = (v - r) / (1000 * 60 * 60 * 24);
+  if (dif < 14) {
+      Swal.fire("Fecha inválida", "El vencimiento debe ser mínimo 14 días después.", "warning");
+      return;
+  }
+
+  const payload = {
+    proveedor_nombre: proveedor_nombre.value,
+    proveedor_contacto: proveedor_contacto.value,
+    producto: producto.value,
+    fecha_registro: fecha_registro.value,
+    fecha_vencimiento: fecha_vencimiento.value,
+    cantidad: cantidad.value,
+    precio_unitario: precio_unitario.value
+  };
+
+  const res = await fetch("/registrar_compra", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+  });
+
+  const result = await res.json();
+
+  if (result.ok) {
+      Swal.fire("Compra registrada", "", "success");
+      compraForm.reset();
+      fecha_registro.value = new Date().toISOString().split("T")[0];
+      filtro_dia.value && filtrarPorDia();
+  }
+});
+
+/* ============================================================
+   FILTRAR POR DÍA
+   ============================================================ */
+async function filtrarPorDia() {
+  const dia = filtro_dia.value;
+
+  if (!dia) {
+    Swal.fire("Seleccione una fecha", "", "warning");
+    return;
+  }
+
+  const res = await fetch("/filtrar_compras_dia", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ dia })
+  });
+
+  const compras = await res.json();
+  window.comprasGlobal = compras;
+  mostrarCompras(compras);
+}
+
+/* ============================================================
+   ELIMINAR COMPRA
+   ============================================================ */
+async function eliminarCompra(id) {
+    const confirm = await Swal.fire({
+        title: "¿Eliminar compra?",
+        text: "No se podrá recuperar",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#FF4444"
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    const res = await fetch(`/eliminar_compra/${id}`, { method: "DELETE" });
+    const data = await res.json();
+
+    if (data.ok) {
+        Swal.fire("Eliminado", "", "success");
+        filtro_dia.value && filtrarPorDia();
+    }
+}
+</script>
+
+</body>
+</html>

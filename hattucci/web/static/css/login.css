@@ -1,0 +1,94 @@
+/* ===========================================================
+   🔸 LOGIN CONTAINER 🔸
+   =========================================================== */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at top left, #000, #1a1a1a);
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-container {
+    background: #0d0d0d;
+    border: 2px solid #FFD700;
+    border-radius: 1rem;
+    padding: 2rem 3rem;
+    width: 350px;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+    text-align: center;
+}
+
+.login-container h2 {
+    color: #FFD700;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 0.9rem; /* Ajustado para coincidir con el botón */
+    margin: 0.5rem 0;
+    border-radius: 0.7rem; /* Coincide con el botón */
+    border: 1px solid #FFD700;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.login-container input:focus {
+    outline: none;
+    box-shadow: 0 0 10px #FFD700;
+    transform: scale(1.02);
+}
+
+.login-container button {
+    width: 100%;
+    padding: 0.9rem; /* Igual que los inputs */
+    margin-top: 0.5rem; /* Igual que el margen de los inputs */
+    border: none;
+    border-radius: 0.7rem; /* Igual que los inputs */
+    background: linear-gradient(135deg, #FFD700, #FFC107);
+    color: #000;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.login-container button:hover {
+    background: #ffeb3b;
+    transform: scale(1.02); /* Mantener proporción similar al input */
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.login-container p {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+}
+
+.login-container a {
+    color: #FFD700;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-container a:hover {
+    text-decoration: underline;
+}
+
+.alerta-error {
+    color: #b30000;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    font-weight: 600;
+    font-size: 15px;
+}

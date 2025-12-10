@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        .ok { color: green; }
+        .error { color: red; }
+    </style>
+    <link rel="stylesheet" href="static/css/login.css">
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Iniciar Sesión</h2>
+
+    <form action="/ingresar" method="POST" id="formLogin">
+
+        <!-- USUARIO -->
+        <input type="text" name="usuario" id="usuario" placeholder="Usuario">
+        <span id="msgUsuario"></span>
+        <br>
+
+        <!-- CONTRASEÑA -->
+        <input type="password" name="contraseña" id="contraseña" placeholder="Contraseña">
+        <span id="msgPassword"></span>
+        <br>
+
+        <!-- BOTÓN DESACTIVADO -->
+        <button type="submit" id="btnIngresar">Ingresar</button>
+    </form>
+
+    {% if error %}
+<div class="alerta-error">
+    {{ error }}
+</div>
+{% endif %}
+
+    <p>¿No tienes cuenta? 
+        <a href="/registro" class="gold-link">Regístrate aquí</a>
+    </p>
+</div>
+
+<script>
+// Obtener referencias
+const usuarioInput = document.getElementById("usuario");
+const passInput = document.getElementById("contraseña");
+const btnIngresar = document.getElementById("btnIngresar");
+const msgUsuario = document.getElementById("msgUsuario");
+
+// 🔒 DESACTIVAR BOTÓN AL INICIO
+btnIngresar.disabled = true;
+btnIngresar.style.opacity = "0.6";
+btnIngresar.style.cursor = "not-allowed";
+
+// 🟡 Función que ACTIVARÁ o DESACTIVARÁ el botón
+function actualizarBoton() {
+    const usuarioClass = msgUsuario.className;
+    const pass = passInput.value.trim();
+
+    if (usuarioClass === "ok" && pass !== "") {
+        btnIngresar.disabled = false;
+        btnIngresar.style.opacity = "1";
+        btnIngresar.style.cursor = "pointer";
+    } else {
+        btnIngresar.disabled = true;
+        btnIngresar.style.opacity = "0.6";
+        btnIngresar.style.cursor = "not-allowed";
+    }
+}
+
+// 🟡 Validar usuario en tiempo real
+usuarioInput.addEventListener("input", function() {
+    let usuario = this.value.trim();
+
+    if (usuario === "") {
+        msgUsuario.textContent = "";
+        msgUsuario.className = "";
+        actualizarBoton();
+        return;
+    }
+
+    fetch("/validar_usuario_login?usuario=" + usuario)
+    .then(res => res.json())
+    .then(data => {
+        if (data.existe) {
+            msgUsuario.textContent = "✔ Usuario válido";
+            msgUsuario.className = "ok";
+        } else {
+            msgUsuario.textContent = "❌ Usuario no registrado";
+            msgUsuario.className = "error";
+        }
+
+        actualizarBoton();
+    });
+});
+
+// 🟡 Validar contraseña (solo revisa si está vacía)
+passInput.addEventListener("input", actualizarBoton);
+
+</script>
+
+
+</body>
+</html>
